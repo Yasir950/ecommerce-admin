@@ -1,115 +1,74 @@
-import { useEffect, useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Box from "@mui/material/Box";
-import ReactApexChart from "react-apexcharts";
+import React from "react";
+import Chart from "react-apexcharts";
 
-export default function SalesChart({ data }) {
-  const theme = useTheme();
-  const xsDown = useMediaQuery(theme.breakpoints.down("sm"));
-
-  // 🔹 Ensure data is valid
-  const safeData = Array.isArray(data) && data.length > 0 ? data : [];
-
-  // Extract X-Axis Categories & Y-Axis Values
-  const categories = safeData.map((item) => item.vehicle_status);
-  const vehicleCounts = safeData.map((item) => item.vehicle_count);
-  const dummyCounts = safeData.map((item) => item.vehicles_amount);
-
-  const [series, setSeries] = useState([
-    { name: "Vehicles Amount", data: dummyCounts },
-    { name: "Vehicles Count", data: vehicleCounts },
-  ]);
-  useEffect(() => {
-    if (safeData.length > 0) {
-      const updatedSeries = [
-        {
-          name: "Vehicles Amount",
-          data: safeData.map((item) => item.vehicles_amount),
-        }, // Placeholder
-        {
-          name: "Vehicles Count",
-          data: safeData.map((item) => item.vehicle_count),
-        },
-      ];
-      setSeries(updatedSeries);
-    }
-  }, [data]); // 🔹 Update when data changes
-
-  const chartOptions = {
+const MonthlyOverviewChart = ({ data }) => {
+  // Labels for x-axis
+  const dates = data.map((item) => item._id);
+  console.log(dates);
+  // Chart configuration
+  const options = {
     chart: {
       type: "bar",
-      height: 430,
       toolbar: { show: false },
     },
     plotOptions: {
       bar: {
-        columnWidth: xsDown ? "60%" : "20%",
-        borderRadius: 2,
+        horizontal: false,
+        columnWidth: "35%",
+        borderRadius: 4,
       },
     },
-    dataLabels: { enabled: false },
-    stroke: { show: true, width: 2, colors: ["transparent"] },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ["transparent"],
+    },
     xaxis: {
-      categories: categories, // 🔹 Handle dynamic categories
-      labels: {
-        rotate: -45,
-        style: { colors: theme.palette.text.secondary },
-      },
+      categories: dates,
     },
     yaxis: [
       {
-        labels: { style: { colors: theme.palette.text.secondary } },
+        title: { text: "Orders" },
       },
       {
         opposite: true,
-        labels: { style: { colors: theme.palette.text.secondary } },
+        title: { text: "Sales (PKR)" },
       },
     ],
-    fill: { opacity: 1 },
     tooltip: {
+      shared: true,
+      intersect: false,
       y: {
-        formatter: function (val, { seriesIndex }) {
-          if (seriesIndex === 0) {
-            return `$${val.toLocaleString()} USD`; // 🔹 First series: Vehicle Amount
-          } else if (seriesIndex === 1) {
-            return `${val} Vehicles`; // 🔹 Second series: Vehicle Count
-          }
-          return val;
-        },
+        formatter: (val) => (val ? val.toLocaleString() : 0),
       },
     },
-    grid: { borderColor: theme.palette.divider },
-    colors: ["#40ABFC", "#40EAB0"],
-    responsive: [
-      {
-        breakpoint: 600,
-        options: {
-          yaxis: { show: true },
-        },
-      },
-    ],
+    legend: {
+      position: "top",
+      horizontalAlign: "center",
+    },
+    colors: ["#00E396", "#008FFB"], // Orders (green), Sales (blue)
   };
 
-  // 🔹 Show Loading Message if No Data
-  if (safeData.length === 0) {
-    return (
-      <Box sx={{ p: 2, textAlign: "center", color: "gray" }}>
-        Loading chart data...
-      </Box>
-    );
-  }
+  // Two data series: orders & sales
+  const series = [
+    {
+      name: "Orders",
+      data: data.map((item) => item.totalOrders),
+    },
+    {
+      name: "Sales Amount",
+      data: data.map((item) => item.totalSales),
+    },
+  ];
 
   return (
-    <Box sx={{ p: 2.5, pb: 0, mt: 1 }}>
-      <Box id="chart" sx={{ bgcolor: "transparent" }}>
-        <ReactApexChart
-          options={chartOptions}
-          series={series}
-          type="bar"
-          height={360}
-        />
-      </Box>
-    </Box>
+    <div>
+      <Chart options={options} series={series} type="bar" height={400} />
+    </div>
   );
-}
+};
+
+export default MonthlyOverviewChart;

@@ -1,26 +1,15 @@
-import {
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { RightOutlined } from "@ant-design/icons";
 import {
   Breadcrumbs,
   FormControl,
   FormHelperText,
   Grid,
-  IconButton,
-  InputAdornment,
   InputLabel,
   OutlinedInput,
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  getUsersData,
-  saveUserData,
-  updateUserData,
-  uploadToCloudinary,
-} from "apiservices";
+import { saveUserData, updateUserData, uploadToCloudinary } from "apiservices";
 import MainCard from "components/MainCard";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -29,18 +18,10 @@ import { toast } from "react-toastify";
 import { AddBtn } from "styled/styled";
 function AddProduct({ closeForm, getUser, catsData }) {
   const updatedObj = useSelector((state) => state.user.updatedObj);
-  const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [files, setFiles] = useState([]);
   const fileSelectedHandler = (e) => {
     setFiles([...files, ...Array.from(e.target.files)]);
-  };
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
   };
   const {
     register,
@@ -51,13 +32,7 @@ function AddProduct({ closeForm, getUser, catsData }) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const toBase64 = (file) =>
-      new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
+
     if (updatedObj) {
       const existingImages = files.filter((img) => typeof img === "string");
       const newFiles = files.filter((img) => img instanceof File);
@@ -103,6 +78,7 @@ function AddProduct({ closeForm, getUser, catsData }) {
         description: updatedObj.description || "",
         price: updatedObj.price || "",
         discount: updatedObj.discount || "",
+        quantity: updatedObj.quantity || "",
         category: updatedObj.category || "",
       });
       setFiles(updatedObj.images);
@@ -165,7 +141,9 @@ function AddProduct({ closeForm, getUser, catsData }) {
             <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
               <select className="style-class" {...register("category")}>
                 {catsData.map((item) => (
-                  <option value={item._id}>{item.name}</option>
+                  <option key={item._id} value={item._id}>
+                    {item.name}
+                  </option>
                 ))}
               </select>
               {errors.category && (
@@ -206,7 +184,7 @@ function AddProduct({ closeForm, getUser, catsData }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={12} lg={12}>
+          <Grid item xs={12} md={6} lg={6}>
             <InputLabel htmlFor="email-login">Description</InputLabel>
             <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
               <OutlinedInput
@@ -219,6 +197,24 @@ function AddProduct({ closeForm, getUser, catsData }) {
                   "aria-label": "weight",
                 }}
               />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6} lg={6}>
+            <InputLabel htmlFor="email-login">Quantity</InputLabel>
+            <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+              <OutlinedInput
+                {...register("quantity", { required: true })}
+                id="outlined-adornment-weight"
+                aria-describedby="outlined-weight-helper-text"
+                inputProps={{
+                  "aria-label": "weight",
+                }}
+              />
+              {errors.quantity && (
+                <FormHelperText style={{ color: "red", marginLeft: "0px" }}>
+                  {"Email is required"}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
           <Grid item xs={12}>

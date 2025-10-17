@@ -13,7 +13,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import Logo from "../asset/login-logo.png";
+import Logo from "../asset/logo.png";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Alert from "../misc/dialogue";
@@ -136,7 +136,7 @@ function LoginComponent() {
       }}
     >
       <LoginContainer sx={{ width: { sm: "50%", lg: "35%" } }}>
-        <img src={Logo} alt="logo" />
+        <img src={Logo} alt="logo" style={{ width: "100px" }} />
         <FormGroup sx={{ width: { sm: "100%", md: "80%", gap: 12 } }}>
           <Stack justifyContent={"center"} alignItems={"center"}>
             <Typography
@@ -144,9 +144,6 @@ function LoginComponent() {
             >
               Login
             </Typography>
-            <LabelForm htmlFor="my-input" sx={{ fontSize: "15px" }}>
-              Ship your vehicles, anytime, anywhere
-            </LabelForm>
           </Stack>
 
           <FormControl>

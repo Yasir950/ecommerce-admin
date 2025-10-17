@@ -44,7 +44,7 @@ export const changePassword = async (userData) => {
     throw error;
   }
 };
-export const getUsersData = async (url) => {
+export const getUsersData = async (url, start = "", end = "") => {
   const token = localStorage.getItem("token");
   const myHeaders = new Headers();
   myHeaders.append("Authorization", "Bearer " + token);
@@ -57,7 +57,10 @@ export const getUsersData = async (url) => {
     Accept: "application/json",
     "Content-Type": "application/json",
   };
-  let res = await API.get(`/api/${url}`, requestOptions);
+  let res = await API.get(
+    `/api/${url}${start && `?start=${start}&`}${end && `end=${end}`}`,
+    requestOptions
+  );
   let json = res.data;
   return json;
 };

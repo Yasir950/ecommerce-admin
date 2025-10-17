@@ -5,12 +5,7 @@ import MainCard from "components/MainCard";
 import { AddBtn } from "styled/styled";
 import { useEffect, useState } from "react";
 import { deleteItem, getUsersData } from "apiservices";
-import {
-  PlusOutlined,
-  RightOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, RightOutlined } from "@ant-design/icons";
 import { Breadcrumbs } from "@mui/material";
 import AddProduct from "./addProduct";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,12 +17,22 @@ import { toast } from "react-toastify";
 
 // ===============================|| COMPONENT - COLOR ||=============================== //
 
-function createData(id, name, description, price, discount, category, images) {
+function createData(
+  id,
+  name,
+  description,
+  price,
+  discount,
+  quantity,
+  category,
+  images
+) {
   return {
     id,
     name,
     description,
     price,
+    quantity,
     category,
     discount,
     images,
@@ -42,7 +47,7 @@ export default function ProductComp() {
         <>
           <img
             src={row?.images.length !== 0 ? row?.images[0] : ""}
-            alt="photo"
+            alt=""
             width={"50"}
             height={"50"}
             style={{ borderRadius: "6px", border: "1px solid", margin: "10px" }}
@@ -83,6 +88,17 @@ export default function ProductComp() {
     {
       name: "Price",
       selector: (row) => row.price,
+      sortable: true,
+      style: {
+        fontSize: "14px",
+        fontWeight: 400,
+        color: "#667085",
+        // override the row height
+      },
+    },
+    {
+      name: "Quantity",
+      selector: (row) => row.quantity,
       sortable: true,
       style: {
         fontSize: "14px",
@@ -170,6 +186,7 @@ export default function ProductComp() {
         item.description,
         item.price,
         item.discount,
+        item.quantity,
         item.category,
         item.images
       )
